@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Mp3Cleaner": {
+      "commandName": "Project",
+      "commandLineArgs": "-d \"C:\\Users\\andre\\Documents\\books\\test\""
+    }
+  }
+}
