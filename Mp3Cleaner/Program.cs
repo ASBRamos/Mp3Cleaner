@@ -10,7 +10,7 @@ namespace Mp3Cleaner;
 public class Program
 {
     internal static long MinimumMp3SizeBytes = 20 * 1024 * 1024; // 20 MB
-    internal static char[] backupFileNameChars = { 'A' };
+    internal static int UnknownFileCount = 1;
 
     static void Main(string[] args)
     {
@@ -40,9 +40,7 @@ public class Program
                     HandleFoundFile(topLevelFolder, subFile);
                 }
             }
-#if !DEBUG
             subFolder.Delete();
-#endif
         }
         Console.WriteLine("Press any key to exit...");
         Console.ReadKey(intercept: true);
@@ -50,52 +48,36 @@ public class Program
 
     internal static void HandleFoundFile(FolderManager destinationFolder, FileInfo file)
     {
-        AudioFileProcessor? fileProcessor = null;
+        string destinationFileName = string.Empty;
         try
         {
             // process the file
-            fileProcessor = new AudioFileProcessor(file.FullName);
+            AudioFileProcessor fileProcessor = new AudioFileProcessor(file.FullName);
+            string bestGuessChapterNumberFileName = fileProcessor.OpeningText(silenceTimeout: 1).Split(' ').First().ToString();
+            if (destinationFolder.HasFile($"{bestGuessChapterNumberFileName}.mp3"))
+            {
+                // TODO: handle multiple duplicates (unlikely?)
+                bestGuessChapterNumberFileName = $"{bestGuessChapterNumberFileName} (1)";
+            }
+            destinationFileName = $"{bestGuessChapterNumberFileName}.mp3";
+#if DEBUG
+            Console.WriteLine(bestGuessChapterNumberFileName);
+#endif
+            // for safety, clean up memory - big stream objects!
+            fileProcessor.Dispose();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error trying to process file: {file.FullName}");
             Console.WriteLine(ex.ToString());
-            Console.WriteLine(ex.StackTrace);
+
+            destinationFileName = $"Unknown_{UnknownFileCount}.mp3";
+            UnknownFileCount++;
         }
-#if DEBUG
-        Console.WriteLine(fileProcessor?.OpeningText(silenceTimeout: 2));
-#else
-        if (!destinationFolder.MoveFileHere(file.FullName))
+
+        if (!destinationFolder.MoveFileHere(file.FullName, destinationFileName))
         {
             Console.WriteLine($"Error when trying to move a file into the target folder.");
         }
-        destinationFolder.RenameFile(file.Name, backupFileNameChars + ".mp3");
-        backupFileNameChars = IncrementCharExcelStyle(backupFileNameChars);
-#endif
-        // for safety
-        fileProcessor?.WavAudioData.Dispose();
-    }
-
-    internal static char[] IncrementCharExcelStyle(char[] chars)
-    {
-        char[] incrementedChar;
-        if (chars.Last() == 'Z')
-        {
-            // incremented char is one char longer, and reset to all 'A's
-            incrementedChar = new char[chars.Length + 1];
-            for (int i = 0; i < incrementedChar.Length; i++)
-            {
-                incrementedChar[i] = 'A';
-            }
-        }
-        else
-        {
-            // return char array is the same length, with the last char incremented by 1
-            incrementedChar = new char[chars.Length];
-            Array.Copy(chars, incrementedChar, chars.Length);
-            incrementedChar[incrementedChar.Length - 1] = (char)(Convert.ToUInt16(chars[chars.Length - 1]) + 1);
-        }
-
-        return incrementedChar;
     }
 }

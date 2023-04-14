@@ -11,40 +11,33 @@ namespace AudioFileUtils;
 [SupportedOSPlatform("windows")]
 internal class SpeechRecognitionHelper
 {
-    private readonly SpeechRecognitionEngine speechRecognitionEngine;
+    internal readonly SpeechRecognitionEngine speechRecognitionEngine;
     public SpeechRecognitionHelper()
     {
         this.speechRecognitionEngine = new SpeechRecognitionEngine();
         this.speechRecognitionEngine.LoadGrammar(new DictationGrammar());
-        this.speechRecognitionEngine.BabbleTimeout = new TimeSpan(long.MaxValue);
-        this.speechRecognitionEngine.InitialSilenceTimeout = new TimeSpan(long.MaxValue);
+        this.speechRecognitionEngine.BabbleTimeout = new TimeSpan(hours: 0, minutes: 0, seconds: 30);
+        this.speechRecognitionEngine.InitialSilenceTimeout = new TimeSpan(hours: 0, minutes: 0, seconds: 30);
     }
 
     public string ParseSpeechToText(MemoryStream wavDataStream, int? timeoutSecondsAfterOpeningWords)
     {
-        this.speechRecognitionEngine.EndSilenceTimeout = new TimeSpan(0, 0, timeoutSecondsAfterOpeningWords ?? 2); // we want to end the sample after hearing the initial words
+        // we want to end the sample after hearing the initial words
+        this.speechRecognitionEngine.EndSilenceTimeout = new TimeSpan(hours: 0, minutes: 0, seconds: timeoutSecondsAfterOpeningWords ?? 2);
         this.speechRecognitionEngine.SetInputToWaveStream(wavDataStream);
 
-        StringBuilder sb = new StringBuilder();
-        while (true)
+        try
         {
-            try
+            var recognizedText = this.speechRecognitionEngine.Recognize();
+            if (recognizedText == null)
             {
-                var recognizedText = this.speechRecognitionEngine.Recognize();
-                if (recognizedText == null)
-                {
-                    break;
-                }
-
-                sb.Append(recognizedText.Text);
+                return "No text recognized.";
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                break;
-            }
+            return recognizedText.Text;
         }
-
-        return sb.ToString();
+        catch (Exception ex)
+        {
+            return ex.ToString();
+        }
     }
 }

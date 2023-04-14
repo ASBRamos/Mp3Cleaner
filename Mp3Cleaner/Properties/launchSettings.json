@@ -2,7 +2,7 @@
   "profiles": {
     "Mp3Cleaner": {
       "commandName": "Project",
-      "commandLineArgs": "-d \"C:\\Users\\andre\\Documents\\books\\test\""
+      "commandLineArgs": "-d \"D:\\Documents\\yoinked books\\test\""
     }
   }
 }

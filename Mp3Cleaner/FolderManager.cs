@@ -25,12 +25,12 @@ internal class FolderManager
         return Directory.GetFiles(FolderName).Select(x => new FileInfo(x));
     }
 
-    public bool MoveFileHere(string filePath)
+    public bool MoveFileHere(string filePath, string? newFileName = null)
     {
         try
         {
             string fileName = Path.GetFileName(filePath);
-            File.Move(filePath, Path.Combine(FolderName, fileName));
+            File.Move(filePath, Path.Combine(FolderName, newFileName ?? fileName));
             return true;
         }
         catch
@@ -65,5 +65,10 @@ internal class FolderManager
         {
             return false;
         }
+    }
+
+    public bool HasFile(string fileName)
+    {
+        return this.Files().Select(file => file.Name).Contains(fileName);
     }
 }
