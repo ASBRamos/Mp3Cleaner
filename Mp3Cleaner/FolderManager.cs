@@ -4,67 +4,66 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mp3Cleaner
+namespace Mp3Cleaner;
+
+internal class FolderManager
 {
-    internal class FolderManager
+    public string FolderName { get; set; }
+
+    public FolderManager(string folderName)
     {
-        public string FolderName { get; set; }
+        FolderName = folderName;
+    }
 
-        public FolderManager(string folderName)
+    public IEnumerable<FolderManager> Subdirectories()
+    {
+        return Directory.GetDirectories(FolderName).Select(x => new FolderManager(x));
+    }
+
+    public IEnumerable<FileInfo> Files()
+    {
+        return Directory.GetFiles(FolderName).Select(x => new FileInfo(x));
+    }
+
+    public bool MoveFileHere(string filePath)
+    {
+        try
         {
-            FolderName = folderName;
+            string fileName = Path.GetFileName(filePath);
+            File.Move(filePath, Path.Combine(FolderName, fileName));
+            return true;
         }
-
-        public IEnumerable<FolderManager> Subdirectories()
+        catch
         {
-            return Directory.GetDirectories(FolderName).Select(x => new FolderManager(x));
+            return false;
         }
+    }
 
-        public IEnumerable<FileInfo> Files()
+    public bool Delete()
+    {
+        try
         {
-            return Directory.GetFiles(FolderName).Select(x => new FileInfo(x));
+            Directory.Delete(FolderName, true);
+            return true;
         }
-
-        public bool MoveFileHere(string filePath)
+        catch
         {
-            try
-            {
-                string fileName = Path.GetFileName(filePath);
-                File.Move(filePath, Path.Combine(FolderName, fileName));
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return false;
         }
+    }
 
-        public bool Delete()
+    public bool RenameFile(string fileName, string newFileName)
+    {
+        try
         {
-            try
-            {
-                Directory.Delete(FolderName, true);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            string filePath = Path.Combine(FolderName, fileName);
+            string newFilePath = Path.Combine(FolderName, newFileName);
+            File.Move(filePath, newFilePath);
+            return true;
         }
-
-        public bool RenameFile(string fileName, string newFileName)
+        catch
         {
-            try
-            {
-                string filePath = Path.Combine(FolderName, fileName);
-                string newFilePath = Path.Combine(FolderName, newFileName);
-                File.Move(filePath, newFilePath);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return false;
         }
     }
 }

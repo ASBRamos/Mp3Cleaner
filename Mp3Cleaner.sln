@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mp3Cleaner", "Mp3Cleaner\Mp3Cleaner.csproj", "{89B66C35-7D46-440B-B6C0-6B84218F64BD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioFileUtils", "AudioFileProcessor\AudioFileUtils.csproj", "{2FA83FEF-16A8-465A-9FE8-429932B7AF67}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{89B66C35-7D46-440B-B6C0-6B84218F64BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89B66C35-7D46-440B-B6C0-6B84218F64BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89B66C35-7D46-440B-B6C0-6B84218F64BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FA83FEF-16A8-465A-9FE8-429932B7AF67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FA83FEF-16A8-465A-9FE8-429932B7AF67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FA83FEF-16A8-465A-9FE8-429932B7AF67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FA83FEF-16A8-465A-9FE8-429932B7AF67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
